@@ -1,0 +1,36 @@
+name: Validate cask
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cask:
+    runs-on: macos-14
+    timeout-minutes: 15
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: 1
+      HOMEBREW_NO_ANALYTICS: 1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Load checked-out tap
+        run: brew tap pceiley/pickosaurus "$GITHUB_WORKSPACE"
+      - name: Check cask and download checksum
+        run: |
+          brew info --cask pceiley/pickosaurus/pickosaurus
+          brew fetch --cask pceiley/pickosaurus/pickosaurus
+      - name: Test installation and notarization
+        run: |
+          mkdir -p "$RUNNER_TEMP/apps"
+          brew install --cask --appdir="$RUNNER_TEMP/apps" pceiley/pickosaurus/pickosaurus
+          codesign --verify --deep --strict --verbose=2 "$RUNNER_TEMP/apps/Pickosaurus.app"
+          xcrun stapler validate "$RUNNER_TEMP/apps/Pickosaurus.app"
+      - name: Test uninstall
+        run: brew uninstall --cask pceiley/pickosaurus/pickosaurus
