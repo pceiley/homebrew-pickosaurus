@@ -1,6 +1,6 @@
 cask "pickosaurus" do
-  version "0.2.0"
-  sha256 "180b85f72688c03b25dbcfce4448ecbbb9de4c78e2333f2d193e8e613bd5e605"
+  version "0.2.1"
+  sha256 "31ce3c2546c9d0ae0133a5b0d61155f6b9d3680df7270305467bf251420dec79"
 
   url "https://github.com/pceiley/pickosaurus/releases/download/v#{version}/Pickosaurus-#{version}.zip"
   name "Pickosaurus"
